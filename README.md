@@ -1,3 +1,7 @@
+
+https://docs.google.com/document/d/1u08fBK7BAksTfXcQrGG-R6ZSA4gN55iD-3Hd0txv3yQ/edit?usp=sharing
+
+
 ## Set up MongoDb
 
 ### Install MongoDB
@@ -23,3 +27,131 @@ Confirm the repository is now available:
 ```
 sudo yum repolist
 ```
+
+Step 3: Install MongoDB on Amazon Linux 2:
+
+```
+yum install mongodb-org -y 
+```
+Now, check the installed MongoDB version:
+```
+mongod --version
+```
+
+Step 4: Start mongodb using below command:
+
+```
+mongod --replSet "rs0" --bind_ip 0.0.0.0 --dbpath /var/lib/mongo --logpath /var/log/mongodb/mongod.log --port 27017 &
+```
+
+### Configure Replication Set:
+
+Step 1: Configure Mongodb servers (1 Primary, 1 Replica set, 1 Arbiter:
+```
+
+Follow the above steps to install mongodb for these three instances.
+```
+
+Step 2: Initiate replica set with 1 Primary, 1 Replica set and 1 Arbiter:
+
+```
+mongo mongodb://<mongoIP/DNS>
+
+
+rs.initiate(
+  {
+    _id: "rs0",
+    members: [
+      { _id : 0, host : "<Instance1IP>:27017" },
+      { _id : 1, host : "<Instance2IP>:27017" },
+      { _id : 2, host : "Instance3IP>:27017", arbiterOnly: true }
+    ]
+  }
+)
+```
+
+Step 3: Check the status or ReplicaSet:
+
+```
+rs.status()
+rs.printReplicationInfo()
+db.getReplicationInfo()
+rs.conf()
+```
+
+
+Step 4: Test the Replication:
+```
+# Check the current DB
+db
+# Check all the DBs
+show dbs
+
+
+# Create the collection
+db.createCollection("firstCollection")
+
+
+# Check created collections
+show collections
+```
+Step 5: Now login to one of the secondary Db:
+
+```
+mongo mongodb://<mongodb2>
+```
+Step 6: Allow read operations on secondary members for the MongoDB connection:
+```
+rs.secondaryOk()
+```
+
+Step 6: Test the collection is replicated or not:
+```
+show dbs
+show collections
+```
+### Test failover:
+Step 1: Login the primary instance and stop the mongodb service:
+```
+ps -ef | grep mongo
+kill -9 <pidof mongo>
+```
+Step 2: Login in mongodb replica set cluster:
+```
+mongo 'mongodb://mongodb0,mongodb1,mongodb2/?replicaSet=rs0'
+```
+Step 3: Check the replica set status:
+```
+mongos> rs.status()
+mongos> show dbs
+mongos> show collections
+```
+Step 4: Create another collection:
+```
+mongos> db.createCollection("secondCollection")
+mongos> show collections
+```
+Step 5: Test replication:
+```
+# login to secondary mongodb and test it:
+mongo mongodb://<mongodb2>
+
+mongos> rs.slaveOk()
+mongos> show dbs
+mongos> show collections
+```
+Step 6: Now login to instance of primary mongo which one we had stopped and start the mongodb service:
+```
+mongod --replSet "rs0" --bind_ip 0.0.0.0 --dbpath /var/lib/mongo --logpath /var/log/mongodb/mongod.log --port 27017 &
+```
+
+Step 7: Check what happened since we brought back the failed primary:
+```
+
+mongo 'mongodb://mongodb0,mongodb1,mongodb2/?replicaSet=rs0'
+
+mongos> rs.status()
+```
+
+#### Note: connection string only for read replicas
+mongo 'mongodb://mongodb0,mongodb1,mongodb2/?replicaSet=rs0&readPrefreference=secondry'
