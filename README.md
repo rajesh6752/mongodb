@@ -44,7 +44,8 @@ Step 1: Configure Mongodb servers (1 Primary, 1 Replica set, 1 Arbiter. Follow t
 Step 2: Initiate replica set with 1 Primary, 1 Replica set and 1 Arbiter:
 ```
 mongo mongodb://<mongoIP/DNS>
-
+```
+```
 mongos> rs.initiate(
   {
     _id: "rs0",
@@ -118,7 +119,8 @@ Step 5: Test replication:
 ```
 # login to secondary mongodb and test it:
 mongo mongodb://<mongodb2>
-
+```
+```
 mongos> rs.slaveOk()
 mongos> show dbs
 mongos> show collections
@@ -130,9 +132,9 @@ mongod --replSet "rs0" --bind_ip 0.0.0.0 --dbpath /var/lib/mongo --logpath /var/
 
 Step 7: Check what happened since we brought back the failed primary:
 ```
-
 mongo 'mongodb://mongodb0,mongodb1,mongodb2/?replicaSet=rs0'
-
+```
+```
 mongos> rs.status()
 ```
 
