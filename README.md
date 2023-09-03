@@ -48,7 +48,7 @@ mongod --replSet "rs0" --bind_ip 0.0.0.0 --dbpath /var/lib/mongo --logpath /var/
 
 ### Step 1: Configure Mongodb servers (1 Primary, 1 Replica set, 1 Arbiter. 
 
-Follow the above steps to install mongodb for these three instances.
+`Follow the above steps to install mongodb for these three instances.`
 
 
 ### Step 2: Initiate replica set with 1 Primary, 1 Replica set and 1 Arbiter:
