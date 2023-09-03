@@ -168,4 +168,6 @@ mongos> rs.status()
 
 
 > Note: connection string only for read replicas
-> mongo 'mongodb://mongodb0,mongodb1,mongodb2/?replicaSet=rs0&readPrefreference=secondry'
+```
+ mongo 'mongodb://mongodb0,mongodb1,mongodb2/?replicaSet=rs0&readPrefreference=secondry'
+```
