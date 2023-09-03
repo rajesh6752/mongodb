@@ -21,8 +21,8 @@ enabled=1
 gpgkey=https://www.mongodb.org/static/pgp/server-5.0.asc
 EOL
 ```
+> Confirm the repository is now available:
 ```
-# Confirm the repository is now available:
 sudo yum repolist
 ```
 
@@ -31,8 +31,8 @@ sudo yum repolist
 ```
 yum install mongodb-org -y 
 ```
+> Now, check the installed MongoDB version:
 ```
-# Now, check the installed MongoDB version:
 mongod --version
 ```
 
@@ -77,17 +77,20 @@ mongos> rs.conf()
 
 
 ### Step 4: Test the Replication:
+> Check the current DB
 ```
-# Check the current DB
 mongos> db
-
-# Check all the DBs
+```
+> Check all the DBs
+```
 mongos> show dbs
-
-# Create the collection
+```
+> Create the collection
+```
 mongos> db.createCollection("firstCollection")
-
-# Check created collections
+```
+> Check created collections
+```
 mongos> show collections
 ```
 
@@ -141,8 +144,8 @@ mongos> show collections
 
 
 ### Step 5: Test replication:
+> Login to secondary mongodb and test it:
 ```
-# login to secondary mongodb and test it:
 mongo mongodb://<mongodb2>
 ```
 ```
