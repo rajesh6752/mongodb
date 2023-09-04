@@ -10,8 +10,8 @@ sudo yum -y update
 
 
 ### Step 2: Add MongoDB YUM Repositories:
+> Create a /etc/yum.repos.d/mongodb-org-5.0.repo file so that you can install MongoDB directly using yum:
 ```
-# Create a /etc/yum.repos.d/mongodb-org-5.0.repo file so that you can install MongoDB directly using yum:
 sudo tee /etc/yum.repos.d/mongodb-org-5.0.repo<<EOL
 [mongodb-org-5.0]
 name=MongoDB Repository
