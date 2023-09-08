@@ -154,12 +154,14 @@ movies2
 mongos> 
 ```
 
-# check the db is shored or not
+> check the db is shored or not
+```
 mongos> db.movies.getShardDistribution()
 Collection sharddemo.movies is not sharded.
 mongos>
-
-# enable sharding for the database
+```
+> enable sharding for the database
+```
 mongos> sh.enableSharding("sharddemo")
 {
    "ok" : 1,
@@ -173,9 +175,10 @@ mongos> sh.enableSharding("sharddemo")
    "operationTime" : Timestamp(1694027261, 1)
 }
 mongos>
+```
 
-# Shard the collection 
-mongos>
+> Shard the collection
+ ```
 mongos> sh.shardCollection("sharddemo.movies", {"title": "hashed"})
 {
    "collectionsharded" : "sharddemo.movies",
@@ -190,8 +193,9 @@ mongos> sh.shardCollection("sharddemo.movies", {"title": "hashed"})
    "operationTime" : Timestamp(1694027201, 38)
 }
 mongos>
-
-#check the sharded collections
+```
+> check the sharded collections
+```
 mongos> db.movies.getShardDistribution()
 
 Shard shard1rs at shard1rs/10.102.120.69:50001,10.102.120.69:50002,10.102.120.69:50003
@@ -210,18 +214,22 @@ Totals
  Shard shard2rs contains 0% data, 0% docs in cluster, avg obj size on shard : 0B
 
 mongos>
+```
 
-# check other collections as well
-mongos>
+> Check other collections as well
+```
 mongos> db.movies2.getShardDistribution()
 Collection sharddemo.movies2 is not sharded.
 mongos>
+```
 
-
-# Now insert some records in the shared collection
+> Now insert some records in the shared collection
+```
 [root@ip-10-102-120-69 sharding]# for i in {1..50}; do echo -e "use sharddemo \n db.movies.insertOne({\"title\": \"Supper Man $i\", \"language\": \"English\"})" | mongo mongodb://10.102.120.69:60000; done
+```
 
-# Now check the collections is inserted
+> Now check the collections is inserted
+```
 [root@ip-10-102-120-69 sharding]# mongo mongodb://10.102.120.69:60000
 MongoDB shell version v5.0.20
 ---
@@ -255,7 +263,9 @@ Type "it" for more
 mongos>
 mongos> db.movies.count()
 50
-mongos>
+```
+> Check the shard details
+```
 mongos> db.movies.getShardDistribution()
 
 Shard shard2rs at shard2rs/10.102.120.69:50004,10.102.120.69:50005,10.102.120.69:50006
@@ -274,20 +284,22 @@ Totals
  Shard shard1rs contains 56.03% data, 56% docs in cluster, avg obj size on shard : 68B
 
 mongos>
+```
 
 
+> Another Example what if we want shard collections which already has the data #######
 
-##### Another Example what if we want shard collections which already has the data #######
-
-# check the existing records
+### check the existing records
+```
 mongos> db.movies2.find()
-mongos>
-mongos>
+```
 
-# Insert the some records
+### Insert the some records
+```
 [root@ip-10-102-120-69 sharding]# for i in {1..10}; do echo -e "use sharddemo \n db.movies2.insertOne({\"title\": \"Supper Man $i\", \"language\": \"English\"})" | mongo mongodb://10.102.120.69:60000; done
-
-# Now loging and check the data
+```
+### Now loging and check the data
+```
 [root@ip-10-102-120-69 sharding]# mongo mongodb://10.102.120.69:60000
 MongoDB shell version v5.0.20
 mongos> use sharddemo
@@ -305,14 +317,15 @@ mongos> db.movies2.find()
 { "_id" : ObjectId("64f8d21ec5f8ad6970ec0da1"), "title" : "Supper Man 9", "language" : "English" }
 { "_id" : ObjectId("64f8d21e4b15474c42857494"), "title" : "Supper Man 10", "language" : "English" }
 mongos>
-
-# Veryfi collections is not sharded
-mongos>
+```
+### Veryfi collections is not sharded
+```
 mongos> db.movies2.getShardDistribution()
 Collection sharddemo.movies2 is not sharded.
 mongos>
-
-# Now try the shard collection but you will get below error
+```
+### Now try the shard collection but you will get below error
+```
 mongos> sh.shardCollection("sharddemo.movies2", {"title": "hashed"})
 {
    "ok" : 0,
@@ -329,8 +342,9 @@ mongos> sh.shardCollection("sharddemo.movies2", {"title": "hashed"})
    "operationTime" : Timestamp(1694028673, 9)
 }
 mongos>
-
-# To solve this error need to create Index
+```
+### To solve this error need to create Index
+```
 mongos> db.movies2.createIndex({"title": "hashed"})
 {
    "raw" : {
@@ -353,8 +367,9 @@ mongos> db.movies2.createIndex({"title": "hashed"})
    "operationTime" : Timestamp(1694028792, 7)
 }
 mongos>
-
-# Now shard the collection again
+```
+### Now shard the collection again
+```
 mongos> sh.shardCollection("sharddemo.movies2", {"title": "hashed"})
 {
    "collectionsharded" : "sharddemo.movies2",
@@ -382,8 +397,9 @@ Totals
  Shard shard2rs contains 100% data, 100% docs in cluster, avg obj size on shard : 68B
 
 mongos>
-
-mongos>
+```
+### Check the Shard details 
+```
 mongos> sh.status()
 --- Sharding Status ---
   sharding version: { "_id" : 1, "clusterId" : ObjectId("64f8c9795c26349596127d65") }
@@ -408,8 +424,6 @@ mongos> sh.status()
                         too many chunks to print, use verbose if you want to force print
         {  "_id" : "sharddemo",  "primary" : "shard2rs",  "partitioned" : false,  "version" : {  "uuid" : UUID("7b04b65d-79eb-4f2a-a4e9-538b80757191"),  "timestamp" : Timestamp(1694026888, 1),  "lastMod" : 1 } }
 mongos>
-
-
 mongos> db.movies2.getShardDistribution()
 
 Shard shard2rs at shard2rs/10.102.120.69:50004,10.102.120.69:50005,10.102.120.69:50006
@@ -441,3 +455,4 @@ Totals
  Shard shard1rs contains 56.03% data, 56% docs in cluster, avg obj size on shard : 68B
 
 mongos>
+```
