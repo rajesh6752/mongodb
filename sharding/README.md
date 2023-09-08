@@ -151,13 +151,13 @@ movies2
 mongos> 
 ```
 
-### check the db is shored or not
+### Check the db is shored or not
 ```
 mongos> db.movies.getShardDistribution()
 Collection sharddemo.movies is not sharded.
 mongos>
 ```
-> enable sharding for the database
+### Enable sharding for the database
 ```
 mongos> sh.enableSharding("sharddemo")
 {
@@ -174,7 +174,7 @@ mongos> sh.enableSharding("sharddemo")
 mongos>
 ```
 
-> Shard the collection
+### Shard the collection
  ```
 mongos> sh.shardCollection("sharddemo.movies", {"title": "hashed"})
 {
@@ -191,7 +191,7 @@ mongos> sh.shardCollection("sharddemo.movies", {"title": "hashed"})
 }
 mongos>
 ```
-> check the sharded collections
+### Check the sharded collections
 ```
 mongos> db.movies.getShardDistribution()
 
@@ -213,19 +213,19 @@ Totals
 mongos>
 ```
 
-> Check other collections as well
+### Check other collections as well
 ```
 mongos> db.movies2.getShardDistribution()
 Collection sharddemo.movies2 is not sharded.
 mongos>
 ```
 
-> Now insert some records in the shared collection
+### Now insert some records in the shared collection
 ```
 [root@ip-10-102-120-69 sharding]# for i in {1..50}; do echo -e "use sharddemo \n db.movies.insertOne({\"title\": \"Supper Man $i\", \"language\": \"English\"})" | mongo mongodb://10.102.120.69:60000; done
 ```
 
-> Now check the collections is inserted
+### Now check the collections is inserted
 ```
 [root@ip-10-102-120-69 sharding]# mongo mongodb://10.102.120.69:60000
 MongoDB shell version v5.0.20
@@ -261,7 +261,7 @@ mongos>
 mongos> db.movies.count()
 50
 ```
-> Check the shard details
+### Check the shard details
 ```
 mongos> db.movies.getShardDistribution()
 
@@ -284,7 +284,7 @@ mongos>
 ```
 
 
-> Another Example what if we want shard collections which already has the data #######
+> Another Example, what if we want shard collections which already has the data
 
 ### check the existing records
 ```
