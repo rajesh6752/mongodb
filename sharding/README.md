@@ -103,17 +103,14 @@ mongos> sh.status()
 
 
 
-######
 
 # Test the Sharding
 
-> Login to mongodb cluster and test the sharding
-
+### Login to mongodb cluster and test the sharding
 ```
 mongo mongodb://127.0.0.1:40001
 ```
-> Create a database
-
+### Create a database
 ```
 mongos> use sharddemo
 switched to db sharddemo
@@ -122,7 +119,7 @@ sharddemo
 mongos> show collections
 ```
 
-> Create the collections
+### Create the collections
 ```
 mongos> db.createCollection("movies")
 {
@@ -154,7 +151,7 @@ movies2
 mongos> 
 ```
 
-> check the db is shored or not
+### check the db is shored or not
 ```
 mongos> db.movies.getShardDistribution()
 Collection sharddemo.movies is not sharded.
