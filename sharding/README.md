@@ -1,11 +1,11 @@
-## Set up Sharding using Docker Containers
+# Set up Sharding using Docker Containers
 
-### Config servers
-Start config servers (3 member replica set)
+## Config servers
+### Start config servers (3 member replica set)
 ```
 docker-compose -f config-server/docker-compose.yaml up -d
 ```
-Initiate replica set
+### Initiate replica set
 ```
 mongo mongodb://192.168.1.81:40001
 ```
@@ -25,12 +25,13 @@ rs.initiate(
 rs.status()
 ```
 
-### Shard 1 servers
-Start shard 1 servers (3 member replicas set)
+## Shard 1 servers
+
+### Start shard 1 servers (3 member replicas set)
 ```
 docker-compose -f shard1/docker-compose.yaml up -d
 ```
-Initiate replica set
+### Initiate replica set
 ```
 mongo mongodb://192.168.1.81:50001
 ```
@@ -49,29 +50,30 @@ rs.initiate(
 rs.status()
 ```
 
-### Mongos Router
-Start mongos query router
+## Mongos Router
+
+### Start mongos query router
 ```
 docker-compose -f mongos/docker-compose.yaml up -d
 ```
 
-### Add shard to the cluster
-Connect to mongos
+## Add shard to the cluster
+### Connect to mongos
 ```
 mongo mongodb://192.168.1.81:60000
 ```
-Add shard
+### Add shard
 ```
 mongos> sh.addShard("shard1rs/192.168.1.81:50001,192.168.1.81:50002,192.168.1.81:50003")
 mongos> sh.status()
 ```
-## Adding another shard
-### Shard 2 servers
-Start shard 2 servers (3 member replicas set)
+
+## Shard 2 servers
+> Start shard 2 servers (3 member replicas set)
 ```
 docker-compose -f shard2/docker-compose.yaml up -d
 ```
-Initiate replica set
+> Initiate replica set
 ```
 mongo mongodb://192.168.1.81:50004
 ```
@@ -90,11 +92,11 @@ rs.initiate(
 rs.status()
 ```
 ### Add shard to the cluster
-Connect to mongos
+> Connect to mongos
 ```
 mongo mongodb://192.168.1.81:60000
 ```
-Add shard
+> Add shard
 ```
 mongos> sh.addShard("shard2rs/192.168.1.81:50004,192.168.1.81:50005,192.168.1.81:50006")
 mongos> sh.status()
