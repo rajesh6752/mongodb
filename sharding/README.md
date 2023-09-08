@@ -57,23 +57,23 @@ rs.status()
 docker-compose -f mongos/docker-compose.yaml up -d
 ```
 
-## Add shard to the cluster
-### Connect to mongos
+### Add shard to the cluster
+> Connect to mongos
 ```
 mongo mongodb://192.168.1.81:60000
 ```
-### Add shard
+> Add shard
 ```
 mongos> sh.addShard("shard1rs/192.168.1.81:50001,192.168.1.81:50002,192.168.1.81:50003")
 mongos> sh.status()
 ```
 
 ## Shard 2 servers
-> Start shard 2 servers (3 member replicas set)
+### Start shard 2 servers (3 member replicas set)
 ```
 docker-compose -f shard2/docker-compose.yaml up -d
 ```
-> Initiate replica set
+### Initiate replica set
 ```
 mongo mongodb://192.168.1.81:50004
 ```
@@ -91,7 +91,7 @@ rs.initiate(
 
 rs.status()
 ```
-### Add shard to the cluster
+### Add second shard to the cluster
 > Connect to mongos
 ```
 mongo mongodb://192.168.1.81:60000
@@ -106,7 +106,7 @@ mongos> sh.status()
 
 
 
-# Test the Sharding
+## Test the Sharding
 
 ### Login to mongodb cluster and test the sharding
 ```
