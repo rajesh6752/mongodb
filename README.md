@@ -176,3 +176,150 @@ mongos> rs.status()
 ```
  mongo 'mongodb://mongodb0,mongodb1,mongodb2/?replicaSet=rs0&readPrefreference=secondry'
 ```
+
+
+# Upgrade MongoDB ReplicaSet from 5.0 to 6.0
+
+### Upgrade arbitary:
+> Shut down arbitary and replace the mongod binary with the 6.0 binary.
+```
+ps -ef | grep mongo
+pkill -9 mongo
+ps -ef | grep mongo
+```
+```
+tee /etc/yum.repos.d/mongodb-org-6.0.repo<<EOL
+[mongodb-org-6.0]
+name=MongoDB Repository
+baseurl=https://repo.mongodb.org/yum/amazon/2/mongodb-org/6.0/x86_64/
+gpgcheck=1
+enabled=1
+gpgkey=https://www.mongodb.org/static/pgp/server-6.0.asc
+EOL
+```
+> UnInstall existing version of mongodb.
+```
+yum erase $(rpm -qa | grep mongodb-org)
+rm -rf /var/log/mongodb
+rm -rf /var/lib/mongo
+```
+
+> Install newer version.
+```
+yum install mongodb-org -y
+mongod --version
+```
+
+> Start the process.
+```
+mongod --replSet "rs0" --bind_ip 0.0.0.0 --dbpath /var/lib/mongo --logpath /var/log/mongodb/mongod.log --port 27017 &
+```
+
+> Check Status of arbitar.
+```
+mongosh
+rs.status()
+```
+
+### Upgrade ReplicaSet member(Secondry):
+
+> Shut down replicaSet member and replace the mongod binary with the 6.0 binary.
+```
+ps -ef | grep mongo
+pkill -9 mongo
+ps -ef | grep mongo
+```
+```
+tee /etc/yum.repos.d/mongodb-org-6.0.repo<<EOL
+[mongodb-org-6.0]
+name=MongoDB Repository
+baseurl=https://repo.mongodb.org/yum/amazon/2/mongodb-org/6.0/x86_64/
+gpgcheck=1
+enabled=1
+gpgkey=https://www.mongodb.org/static/pgp/server-6.0.asc
+EOL
+```
+> UnInstall existing version of mongodb.
+```
+yum erase $(rpm -qa | grep mongodb-org)
+rm -rf /var/log/mongodb
+rm -rf /var/lib/mongo
+```
+
+> Install newer version.
+```
+yum install mongodb-org -y
+mongod --version
+```
+
+> Start the process.
+```
+mongod --replSet "rs0" --bind_ip 0.0.0.0 --dbpath /var/lib/mongo --logpath /var/log/mongodb/mongod.log --port 27017 &
+```
+
+> Check Status of secondry.
+```
+mongosh
+rs.secondaryOk()
+rs.status()
+```
+
+### Upgrade Primary:
+
+> Step down the replica set primary: (Connect mongosh to the primary and use rs.stepDown() to step down the primary and force an election of a new primary).
+```
+mongosh
+rs.stepDown()
+```
+> Upgrade the primary: (When rs.status() shows that the primary has stepped down and another member has assumed PRIMARY state, upgrade the stepped-down primary):
+
+> Shut down the primary and replace the mongod binary with the 6.0 binary.
+
+```
+ps -ef | grep mongo
+pkill -9 mongo
+ps -ef | grep mongo
+```
+```
+tee /etc/yum.repos.d/mongodb-org-6.0.repo<<EOL
+[mongodb-org-6.0]
+name=MongoDB Repository
+baseurl=https://repo.mongodb.org/yum/amazon/2/mongodb-org/6.0/x86_64/
+gpgcheck=1
+enabled=1
+gpgkey=https://www.mongodb.org/static/pgp/server-6.0.asc
+EOL
+```
+> UnInstall existing version of mongodb.
+```
+yum erase $(rpm -qa | grep mongodb-org)
+rm -rf /var/log/mongodb
+rm -rf /var/lib/mongo
+```
+
+> Install newer version.
+```
+yum install mongodb-org -y
+mongod --version
+```
+
+> Start the process.
+```
+mongod --replSet "rs0" --bind_ip 0.0.0.0 --dbpath /var/lib/mongo --logpath /var/log/mongodb/mongod.log --port 27017 &
+```
+
+> Check Status of Primary.
+```
+mongosh
+rs.secondaryOk()
+rs.status()
+show collections
+db.firstCollection.find()
+```
+
+### Enable backwards-incompatible 6.0 features: (To enable these 6.0 features, set the feature compatibility version (fCV) to 6.0.):
+> On the primary, run the setFeatureCompatibilityVersion command in the admin database.
+```
+mongosh
+db.adminCommand( { setFeatureCompatibilityVersion: "6.0" } )
+```
